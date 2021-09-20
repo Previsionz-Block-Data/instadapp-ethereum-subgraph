@@ -1,0 +1,91 @@
+
+type InstaIndex @entity{
+  id: ID!
+  masterAddress: Bytes!
+  newMasterAddress: Bytes
+  listAddress: Bytes!
+  createdAt: BigInt!
+  versionCount: BigInt!
+}
+
+type AccountModule @entity{
+  id: ID!
+  address: Bytes!
+  connectorsAddress: Bytes!
+  version: BigInt
+  check: Check
+  createdAt: BigInt!
+}
+
+type Check @entity{
+  id: ID!
+  version: BigInt!
+  address: Bytes!
+  accountModule: AccountModule!
+  createdAt: BigInt!
+}
+
+type DSA @entity{
+  id: ID!
+  owner: Bytes! # address
+  origin: Bytes!
+  createdBy: Bytes!
+  version: BigInt
+  walletAddress: Bytes!
+  #walletID: BigInt!
+  enabledAuthorities: [Bytes!]
+  logCasts: [Cast!] @derivedFrom(field: "dsa")
+  createdAt: BigInt!
+}
+
+type Cast @entity{
+  id: ID!
+  dsa: DSA!
+  origin: Bytes!
+  sender: Bytes!
+  value: BigInt!
+  createdAt: BigInt!
+  spells: [Spell!] @derivedFrom(field: "logCast")
+  version: BigInt!
+}
+
+type Spell @entity{
+  id: ID!
+  logCast: Cast!
+  target: Bytes!
+  targetName: String
+  eventName: String
+  eventParams: Bytes
+}
+
+type Connector @entity{
+  id: ID!
+  connectorAddress: Bytes!
+  connectorName: String!
+  chief: [Chief!]
+  createdAt: BigInt!
+}
+
+type Chief @entity{
+  id: ID!
+  address: Bytes!
+  isChief: Boolean!
+  createdAt: BigInt!
+}
+
+type InstaImplementation @entity{
+  id: ID!
+  address: Bytes!
+  Implementations: [Implementation!] @derivedFrom(field: "instaImplementation")
+  defaultImplementation: Bytes
+  createdAt: BigInt!
+}
+
+type Implementation @entity{
+  id: ID!
+  instaImplementation: InstaImplementation!
+  address: Bytes!
+  signatures: [Bytes!]!
+  defaultStatus: Boolean!
+  createdAt: BigInt!
+}

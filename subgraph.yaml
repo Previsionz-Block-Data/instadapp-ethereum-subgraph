@@ -1,0 +1,149 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: index
+    network: mainnet
+    source:
+      address: "0x2971adfa57b20e5a416ae5a708a8655a9c74f723"
+      abi: index
+      startBlock: 9747000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - DSA
+        - InstaIndex
+        - AccountModule
+        - Check
+      abis:
+        - name: index
+          file: ./abis/index.json
+        - name: InstaAccountVersion
+          file: ./abis/InstaAccountVersion.json
+      eventHandlers:
+        - event: LogAccountCreated(address,indexed address,indexed address,indexed address)
+          handler: handleLogAccountCreated
+        - event: LogNewAccount(indexed address,indexed address,indexed address)
+          handler: handleLogNewAccount
+        - event: LogNewCheck(indexed uint256,indexed address)
+          handler: handleLogNewCheck
+        - event: LogNewMaster(indexed address)
+          handler: handleLogNewMaster
+        - event: LogUpdateMaster(indexed address)
+          handler: handleLogUpdateMaster
+      callHandlers:
+        - function: setBasics(address,address,address,address)
+          handler: handleSetBasics
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: ConnectorsV2
+    network: mainnet
+    source:
+      address: "0x97b0B3A8bDeFE8cB9563a3c610019Ad10DB8aD11"
+      abi: ConnectorsV2
+      startBlock: 12061000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Connectors
+        - Chief
+      abis:
+        - name: ConnectorsV2
+          file: ./abis/ConnectorsV2.json
+      eventHandlers:
+        - event: LogConnectorAdded(indexed bytes32,string,indexed address)
+          handler: handleLogConnectorAdded
+        - event: LogConnectorUpdated(indexed bytes32,string,indexed address,indexed address)
+          handler: handleLogConnectorUpdated
+        - event: LogConnectorRemoved(indexed bytes32,string,indexed address)
+          handler: handleLogConnectorRemoved
+        - event: LogController(indexed address,indexed bool)
+          handler: handleLogController
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: InstaImplementations
+    network: mainnet
+    source:
+      address: "0xCBA828153d3a85b30B5b912e1f2daCac5816aE9D"
+      abi: InstaImplementations
+      startBlock: 12061000
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - InstaImplementation
+        - Implementations
+      abis:
+        - name: InstaImplementations
+          file: ./abis/InstaImplementations.json
+      eventHandlers:
+        - event: LogSetDefaultImplementation(indexed address,indexed address)
+          handler: handleLogSetDefaultImplementation
+        - event: LogAddImplementation(indexed address,bytes4[])
+          handler: handleLogAddImplementation
+        - event: LogRemoveImplementation(indexed address,bytes4[])
+          handler: handleLogRemoveImplementation
+      file: ./src/mapping.ts
+  
+templates:
+  - kind: ethereum/contract
+    name: InstaAccountV1
+    network: mainnet
+    source:
+      abi: InstaAccountV1
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - DSA
+        - Cast
+        - hourlyCastedDSA
+      abis:
+        - name: InstaAccountV1
+          file: ./abis/InstaAccountV1.json
+      eventHandlers:
+        - event: LogEnable(indexed address)
+          handler: handleLogEnable
+        - event: LogDisable(indexed address)
+          handler: handleLogDisable
+        - event: LogSwitchShield(bool)
+          handler: handleLogSwitchShield
+        - event: LogCast(indexed address,indexed address,uint256)
+          handler: handleLogCast
+      callHandlers:
+        - function: cast(address[],bytes[],address)
+          handler: handleCast
+      file: ./src/mapping.ts
+
+  - kind: ethereum/contract
+    name: InstaAccountV2
+    network: mainnet
+    source:
+      abi: InstaAccountV2
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - DSA
+        - Cast
+        - hourlyCastedDSA
+      abis:
+        - name: InstaAccountV2
+          file: ./abis/InstaAccountV2.json
+      eventHandlers:
+        - event: LogEnableUser(indexed address)
+          handler: handleLogEnableUser
+        - event: LogDisableUser(indexed address)
+          handler: handleLogDisableUser
+        - event: LogCast(indexed address,indexed address,uint256,string[],address[],string[],bytes[])
+          handler: handleLogCastV2
+      file: ./src/mapping.ts
+      

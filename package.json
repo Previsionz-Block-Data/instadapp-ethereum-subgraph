@@ -1,0 +1,17 @@
+{
+  "name": "Instadapp-Ethereum",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ Previsionz-Block-Data/Instadapp-Ethereum",
+    "deploy-hosted": "graph deploy --product hosted-service Previsionz-Block-Data/Instadapp-Ethereum",
+    "create-local": "graph create --node http://localhost:8020/ Previsionz-Block-Data/Instadapp-Ethereum",
+    "remove-local": "graph remove --node http://localhost:8020/ Previsionz-Block-Data/Instadapp-Ethereum",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 Previsionz-Block-Data/Instadapp-Ethereum"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.22.0",
+    "@graphprotocol/graph-ts": "^0.22.0"
+  }
+}

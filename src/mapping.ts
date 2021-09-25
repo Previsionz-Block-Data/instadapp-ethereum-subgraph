@@ -52,7 +52,7 @@ import { AccountModule, DSA, Check, InstaIndex, Connector, Chief, Implementation
 //Import Data Source Templates
 import { InstaAccountV1 } from "../generated/templates"
 import { InstaAccountV2 } from "../generated/templates"
-import { logAddAuthority, logRemoveAuthority } from "./helpers"
+import { decodeEvents, logAddAuthority, logRemoveAuthority } from "./helpers"
 
 //Index-Area - New DSA
 export function handleLogAccountCreated(event: LogAccountCreated): void{
@@ -66,7 +66,7 @@ export function handleLogAccountCreated(event: LogAccountCreated): void{
   }
 
   let dsa = new DSA(event.params.account.toHex());
-  dsa.owner = event.params.owner;
+  dsa.initialOwner = event.params.owner;
   dsa.origin = event.params.origin;
   dsa.createdBy = event.params.sender;
   dsa.walletAddress = event.params.account;
@@ -128,7 +128,7 @@ export function handleLogNewAccount(event: LogNewAccount): void {
 export function handleLogNewCheck(event: LogNewCheck): void {
   let check = Check.load(event.params.accountVersion.toHex());
   if(!check){
-    log.warning("handleLogNewCheck: creating new check for"+event.params.accountVersion.toHex(),[]);
+    log.warning("handleLogNewCheck: creating new check for {}",[event.params.accountVersion.toHex()]);
     check = new Check(event.params.accountVersion.toHex())
     check.createdAt = event.block.timestamp;
   }
@@ -184,7 +184,6 @@ export function handleCast(call: CastCall): void{
     spell.logCast = id;
     spell.save();
   }
-  
 }
 
 export function handleLogCast(event: LogCast): void{
@@ -218,7 +217,7 @@ export function handleLogConnectorUpdated(event: LogConnectorUpdated): void{
 
 export function handleLogConnectorRemoved(event: LogConnectorRemoved): void{
   let id = event.params.connectorNameHash.toHex();
-  store.remove('Connector', id); //passt das so?
+  store.remove('Connector', id);
 }
 
 export function handleLogController(event: LogController): void{
@@ -301,9 +300,14 @@ export function handleLogCastV2(event: LogCastV2): void{
   cast.save();
 
   for (let i = 0; i < event.params.targets.length; i++){
+    let completeEventParams = event.params.eventParams[i];
+    let eventName = event.params.eventNames[i];
+    let decodedParams = decodeEvents(eventName, completeEventParams);
+
     let spell = new Spell(event.transaction.hash.toHex().concat("-").concat(i.toString()));
-    spell.eventName = event.params.eventNames[i];
-    spell.eventParams = event.params.eventParams[i];
+    spell.eventName = eventName;
+    spell.completeEventParams = completeEventParams;
+    spell.eventParams = decodedParams;
     spell.targetName = event.params.targetsNames[i];
     spell.target = event.params.targets[i];
     spell.logCast = castId;

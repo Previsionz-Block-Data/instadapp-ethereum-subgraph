@@ -27,7 +27,7 @@ type Check @entity{
 
 type DSA @entity{
   id: ID!
-  owner: Bytes! # address
+  initialOwner: Bytes! # address
   origin: Bytes!
   createdBy: Bytes!
   version: BigInt
@@ -55,7 +55,8 @@ type Spell @entity{
   target: Bytes!
   targetName: String
   eventName: String
-  eventParams: Bytes
+  completeEventParams: Bytes
+  eventParams: [Bytes!]
 }
 
 type Connector @entity{

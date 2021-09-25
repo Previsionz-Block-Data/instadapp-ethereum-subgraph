@@ -280,7 +280,7 @@ export class DSA extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
-    this.set("owner", Value.fromBytes(Bytes.empty()));
+    this.set("initialOwner", Value.fromBytes(Bytes.empty()));
     this.set("origin", Value.fromBytes(Bytes.empty()));
     this.set("createdBy", Value.fromBytes(Bytes.empty()));
     this.set("walletAddress", Value.fromBytes(Bytes.empty()));
@@ -313,13 +313,13 @@ export class DSA extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get owner(): Bytes {
-    let value = this.get("owner");
+  get initialOwner(): Bytes {
+    let value = this.get("initialOwner");
     return value!.toBytes();
   }
 
-  set owner(value: Bytes) {
-    this.set("owner", Value.fromBytes(value));
+  set initialOwner(value: Bytes) {
+    this.set("initialOwner", Value.fromBytes(value));
   }
 
   get origin(): Bytes {
@@ -608,8 +608,8 @@ export class Spell extends Entity {
     }
   }
 
-  get eventParams(): Bytes | null {
-    let value = this.get("eventParams");
+  get completeEventParams(): Bytes | null {
+    let value = this.get("completeEventParams");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -617,11 +617,28 @@ export class Spell extends Entity {
     }
   }
 
-  set eventParams(value: Bytes | null) {
+  set completeEventParams(value: Bytes | null) {
+    if (!value) {
+      this.unset("completeEventParams");
+    } else {
+      this.set("completeEventParams", Value.fromBytes(<Bytes>value));
+    }
+  }
+
+  get eventParams(): Array<Bytes> | null {
+    let value = this.get("eventParams");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytesArray();
+    }
+  }
+
+  set eventParams(value: Array<Bytes> | null) {
     if (!value) {
       this.unset("eventParams");
     } else {
-      this.set("eventParams", Value.fromBytes(<Bytes>value));
+      this.set("eventParams", Value.fromBytesArray(<Array<Bytes>>value));
     }
   }
 }
